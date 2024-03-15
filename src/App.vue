@@ -1,22 +1,33 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import NavBar from './components/NavBar.vue'
+import { authUserStore } from './stores/auth'
+import { onMounted, watch } from 'vue';
+
+
+const authStore = authUserStore();
+
+onMounted(() => {
+  // Check the current user on component mount and update the store
+  // console.log(authStore.currentSession());
+});
+
+// Watch for changes in the authentication state
+watch(
+  () => authStore.user,
+  (newUser) => {
+    // Perform actions based on the new user state
+    // This will be reflected across all components that use the authStore
+  },
+  { deep: true }
+);
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/signin">Signin</RouterLink>
-      </nav>
+    <div>
+      <NavBar />  
     </div>
-  </header>
 
   <RouterView />
 </template>

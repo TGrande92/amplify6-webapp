@@ -20,21 +20,40 @@ export const authUserStore = defineStore('authUserStore', {
         console.log(currentUser);
         const { tokens } = await fetchAuthSession({ forceRefresh: true });
         console.log(tokens);
-        this.isAuthenticated = true;
-        this.user.name = tokens.accessToken.payload.username;
-        this.user.group = tokens.accessToken.payload['cognito:groups'][0];
-        // Assuming 'email' and 'id' are also part of the payload, you can add them here
+        this.$patch({
+          isAuthenticated: true,
+          user: {
+            name: tokens.accessToken.payload.username,
+            email: 'to be added',
+            id: 'to be added',
+            group: tokens.accessToken.payload['cognito:groups'][0]
+          }
+        });
       } catch (err) {
         console.log(err);
-        this.isAuthenticated = false;
-        this.user = { name: '', email: '', id: '', group: '' };
+        this.$patch({
+          isAuthenticated: false,
+          user: {
+            name: '',
+            email: '',
+            id: '',
+            group: ''
+          }
+        });
       }
     },
     async handleSignOut() {
       try {
         await signOut();
-        this.isAuthenticated = false;
-        this.user = { name: '', email: '', id: '', group: '' };
+        this.$patch({
+            isAuthenticated: false,
+          user: {
+            name: '',
+            email: '',
+            id: '',
+            group: ''
+          }
+        })
       } catch (error) {
         console.log('error signing out: ' + error);
       }

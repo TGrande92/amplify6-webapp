@@ -13,8 +13,8 @@
           <div class="dropdown-menu" v-show="isDropdownOpen">
             <RouterLink to="/profile" class="dropdown-item">Profile</RouterLink>
             <RouterLink to="/settings" class="dropdown-item">Settings</RouterLink>
-            <RouterLink to="/signin" class="dropdown-item">Sign In</RouterLink>
-            <a class="dropdown-item" @click="signOut">Sign Out</a>
+            <RouterLink v-if="!authStore.isAuthenticated" to="/signin" class="dropdown-item">Sign In</RouterLink>
+            <a v-else class="dropdown-item" @click="signOut">Sign out</a>
           </div>
         </li>
       </ul>
@@ -23,17 +23,16 @@
   
   <script setup>
   import { ref, computed } from 'vue';
-  import { authUserStore } from '../stores/auth'
-  import { RouterLink } from 'vue-router';
+  import { authUserStore } from '../stores/auth';
+  import { RouterLink, useRouter } from 'vue-router';
   
-  const authStore = authUserStore()
-  // Replace this with your actual authentication logic
-  console.log(authStore.user.name, '123')
-  const userName = computed(() => {
-  console.log('Computed userName being recalculated:', authStore.user.name);
-  return authStore.user.name || 'Placeholder';
-});
+  const authStore = authUserStore();
+  const router = useRouter();
   const isDropdownOpen = ref(false);
+  
+  const userName = computed(() => {
+    return authStore.user.name || 'Placeholder';
+  });
   
   function openDropdown() {
     isDropdownOpen.value = true;
@@ -43,11 +42,13 @@
     isDropdownOpen.value = false;
   }
   
-  function signOut() {
-    // Implement your sign out logic here
+  async function signOut() {
+    await authStore.handleSignOut();
     console.log('Signing out...');
+    router.push('/signin'); // Redirect to the sign-in page after signing out
   }
   </script>
+  
   
   <style scoped>
   .navbar {

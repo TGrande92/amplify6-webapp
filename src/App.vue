@@ -8,9 +8,9 @@ import { onMounted, watch } from 'vue';
 
 const authStore = authUserStore();
 
-onMounted(() => {
-  // Check the current user on component mount and update the store
-  // console.log(authStore.currentSession());
+onMounted(async () => {
+  console.log('Calling currentSession from onMounted');
+  await authStore.currentSession();
 });
 
 // Watch for changes in the authentication state
